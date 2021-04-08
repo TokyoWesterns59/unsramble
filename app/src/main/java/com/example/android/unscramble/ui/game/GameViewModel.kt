@@ -27,11 +27,6 @@ class GameViewModel : ViewModel() {
         getNextWord()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("GameFragment","GameViewModel Destroyed!")
-    }
-
     private fun getNextWord(){
         currentWord = allWordsList.random()
         val tempWord = currentWord.toCharArray()
