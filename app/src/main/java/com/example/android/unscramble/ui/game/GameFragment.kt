@@ -23,6 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import com.example.android.unscramble.R
 import com.example.android.unscramble.databinding.GameFragmentBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -61,11 +62,15 @@ class GameFragment : Fragment() {
         binding.submit.setOnClickListener { onSubmitWord() }
         binding.skip.setOnClickListener { onSkipWord() }
         // Update the UI
-        updateNextWordOnScreen()
         binding.score.text = getString(R.string.score, 0)
         binding.wordCount.text = getString(
                 R.string.word_count, 0, MAX_NO_OF_WORDS)
+        viewModel.currentScrambledWord.observe(viewLifecycleOwner)
+                { newWord ->
+                    binding.textViewUnscrambledWord.text = newWord
+                }
     }
+
 
     /*
     * Checks the user's word, and updates the score accordingly.
@@ -77,8 +82,6 @@ class GameFragment : Fragment() {
         if (viewModel.isUserWordCorrect(playerWord)){
             setErrorTextField(false)
             if (viewModel.nextWord()){
-                updateNextWordOnScreen()
-            }else  {
                 showFinalScoreDialog()
             }
         }else {
@@ -93,7 +96,7 @@ class GameFragment : Fragment() {
     private fun onSkipWord() {
         if (viewModel.nextWord()){
             setErrorTextField(false)
-            updateNextWordOnScreen()
+
         }else {
             showFinalScoreDialog()
         }
@@ -129,7 +132,7 @@ class GameFragment : Fragment() {
     private fun restartGame() {
         viewModel.reinitilizeData()
         setErrorTextField(false)
-        updateNextWordOnScreen()
+
     }
 
     /*
@@ -160,7 +163,4 @@ class GameFragment : Fragment() {
     /*
      * Displays the next scrambled word on screen.
      */
-    private fun updateNextWordOnScreen() {
-        binding.textViewUnscrambledWord.text = viewModel.currentScrambledWord
-    }
 }
